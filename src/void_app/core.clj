@@ -23,8 +23,8 @@
     (println "Invalid email")))
 
 (defn send-email-enqueue
-  [to-email subject body]
   "Sends asynchronous email using Java threads"
+  [to-email subject body]
   (Thread. (fn []
              ;; this will run in a new Thread
              (send-email to-email subject body))))
