@@ -13,14 +13,21 @@
 
 (defn send-email
   "A top level function to send email using Postal"
-  [to-email, subject, body]
+  [to-email subject body]
   (if (is-valid-email to-email)
-    (let [resp (send-message conn {:from from-email
-                                   :to to-email
-                                   :subject subject
-                                   :body body})]
-      (println resp))
+    (try (send-message conn {:from from-email
+                             :to to-email
+                             :subject subject
+                             :body body})
+         (catch Exception e (println "Sending email failed with this error" e)))
     (println "Invalid email")))
 
+(defn send-email-enqueue
+  [to-email subject body]
+  "Sends asynchronous email using Java threads"
+  (Thread. (fn []
+             ;; this will run in a new Thread
+             (send-email to-email subject body))))
 
 ;; Sample call: (send-email "mail@atifhaider.com" "Testing email" "Sending email via Clojure code")
+;; Sample threaded email call: (.start (send-email-enqueue "mail@atifhaider.com" "Testing email" "Sending email via Clojure code"))
