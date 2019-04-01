@@ -2,7 +2,10 @@
   (:use [clojure.repl]) ;; To access doc
   (:require [environ.core :refer [env]]
             [postal.core :refer [send-message]]
-            [void-app.validations :refer [is-valid-email]]))
+            [net.cgrand.enlive-html :as html]
+            [void-app.validations :refer [is-valid-email
+                                          is-valid-url]]
+            [void-app.html-parsing :as hparse]))
 
 (def user (env :smtp-user))
 (def pass (env :smtp-password))
@@ -22,6 +25,9 @@
          (catch Exception e (println "Sending email failed with this error" e)))
     (println "Invalid email")))
 
+;; Sample call
+;; (send-email "mail@atifhaider.com" "Testing email" "Sending email via Clojure code")
+
 (defn send-email-enqueue
   "Sends asynchronous email using Java threads"
   [to-email subject body]
@@ -29,5 +35,19 @@
              ;; this will run in a new Thread
              (send-email to-email subject body))))
 
-;; Sample call: (send-email "mail@atifhaider.com" "Testing email" "Sending email via Clojure code")
-;; Sample threaded email call: (.start (send-email-enqueue "mail@atifhaider.com" "Testing email" "Sending email via Clojure code"))
+;; Sample threaded email call
+;; (.start (send-email-enqueue "mail@atifhaider.com" "Testing email" "Sending email via Clojure code"))
+
+(defn parse-website
+  "Takes a URL and fetches the content of the web page
+  and returns page-title, page-meta-description and
+  all the images available in that page"
+  [url]
+  (if (not (is-valid-url url))
+    "Invalid url" ;; returns when the url is invalid
+    (when-let [response (hparse/get-content-from-url url)]
+    (let [dom (html/html-snippet (:body response))]
+      {:title (hparse/get-page-title dom)
+       :images (hparse/get-all-images dom)}))))
+
+;; Sample call: (parse-website "http://atifhaider.com")
