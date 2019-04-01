@@ -9,6 +9,6 @@ Step up env variables which is accessible from this directory (avoid global envs
 
 ## TODO
 
-1. send email as concurrent program
-2. Pass any website url and get page title and the largest image available on that page.
+1. send email as concurrent program. :white_check_mark:
+2. Pass any website url to get page title, email and all the images available on that page.
 3. More utility functions - TBD
