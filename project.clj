@@ -7,7 +7,9 @@
                  [com.draines/postal "2.0.3"]
                  [clj-http "3.9.1"]
                  [environ "1.1.0"]
-                 [enlive "1.1.6"]]
+                 [enlive "1.1.6"]
+                 [org.clojure/data.csv "0.1.4"]]
+  ;; :main ^:skip-aot void-app.core
   :target-path "target/%s"
   :repl-options {:init-ns void-app.core
                  :welcome (println "Wuhoo! you've got all the utility functions. \nMay the force be with you!")})

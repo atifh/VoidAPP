@@ -1,10 +1,11 @@
 (ns void-app.core
   (:use [clojure.repl]) ;; To access doc
   (:require [environ.core :refer [env]]
+            [clojure.java.io :as io]
+            [clojure.data.csv :as csv]
             [postal.core :refer [send-message]]
             [net.cgrand.enlive-html :as html]
-            [void-app.validations :refer [is-valid-email
-                                          is-valid-url]]
+            [void-app.validations :refer :all]
             [void-app.html-parsing :as hparse]))
 
 (def user (env :smtp-user))
@@ -51,3 +52,19 @@
        :images (hparse/get-all-images dom)}))))
 
 ;; Sample call: (parse-website "http://atifhaider.com")
+
+(defn read-csv-file
+  "Takes a path of the csv file and returns
+  a sequence."
+  [file-path]
+  (with-open [reader (io/reader file-path)]
+    (let [csv-data (csv/read-csv reader)]
+      (println csv-data)
+      ;; courtesy: https://github.com/clojure/data.csv#example-usage
+      (map zipmap
+           (->> (first csv-data)
+                (map keyword)
+                repeat)
+           (rest csv-data)))))
+
+;; Sample call: (read-csv-file "test.csv")
